@@ -1,8 +1,1 @@
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Aplicación web para gestionar una lista de tareas. Esta fue la consigna del trabajo final de Argentina Programa 4.0 impartido por la UTN. En el proyecto se destaca el uso de componentes funcionales, hooks(useState, useEffects) , eventos para interactuar con el usuario y la persistencia de datos utilizando localstorage. Ademas de contar con las acciones(crear, eliminar, marcar como completada). En esta segunda version que desarrolle se puede encontrar el filtrado de la lista, estadisticas de la lista, eliminar todas las tareas completadas, un componente de notificación personalizado y el uso de tailwindcss(un poco ya que css es mi punto débil).
