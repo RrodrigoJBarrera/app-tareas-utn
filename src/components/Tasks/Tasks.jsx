@@ -19,7 +19,9 @@ const Tasks = () => {
   }, [listTask]);
 
   const filterList = filterName
-    ? listTask.filter((t) => t.name.toLowerCase().includes(filterName))
+    ? listTask.filter((t) =>
+        t.name.toLowerCase().includes(filterName.toLowerCase())
+      )
     : listTask;
 
   const addTask = (e) => {
