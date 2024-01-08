@@ -26,7 +26,7 @@ const Tasks = () => {
 
   const addTask = (e) => {
     e.preventDefault();
-    if (!newName) {
+    if (inputValidation(newName)) {
       setNotificationMessage('You must enter a name');
       setTimeout(() => {
         setNotificationMessage(null);
@@ -40,6 +40,14 @@ const Tasks = () => {
     };
     setListTask(listTask.concat(newTask));
     setNewName('');
+  };
+
+  const inputValidation = (text) => {
+    const regex = /^(?!\s*$).+/;
+    if (regex.test(text)) {
+      return false;
+    }
+    return true;
   };
 
   const deleteTask = (id) => {
