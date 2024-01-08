@@ -1,11 +1,12 @@
 import React from 'react';
 
-const TaskForm = ({ addTask, valueName, onChangeName }) => {
+const TaskForm = ({ addTask, valueName, onChangeName, inputRef }) => {
   return (
     <div>
       <form className='space-x-4' onSubmit={addTask}>
         <input
-          className='border-b-2 outline-none '
+          ref={inputRef}
+          className='border-b-2 outline-none'
           type='text'
           name='name'
           id='name'

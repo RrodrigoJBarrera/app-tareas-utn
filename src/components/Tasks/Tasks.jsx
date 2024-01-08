@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import TaskList from './TaskList/TaskList';
 import TaskForm from './TaskForm/TaskForm';
 import { v4 as uuidv4 } from 'uuid';
@@ -13,6 +13,7 @@ const Tasks = () => {
   const [newName, setNewName] = useState('');
   const [filterName, setFilterName] = useState('');
   const [notificationMessage, setNotificationMessage] = useState(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     localStorage.setItem('listTasks', JSON.stringify(listTask));
@@ -28,6 +29,7 @@ const Tasks = () => {
     e.preventDefault();
     if (inputValidation(newName)) {
       setNotificationMessage('You must enter a name');
+      inputRef.current.focus();
       setTimeout(() => {
         setNotificationMessage(null);
       }, 5000);
@@ -83,6 +85,10 @@ const Tasks = () => {
     return listTask.length;
   };
 
+  const setFocus = () => {
+    setInputIsFocus(true);
+  };
+
   const totalCompleteTasks = () => {
     const tasksComplete = listTask.filter((t) => t.complete);
     return tasksComplete.length;
@@ -98,7 +104,7 @@ const Tasks = () => {
   };
 
   return (
-    <div className='space-y-4'>
+    <div className='space-y-4 '>
       <TaskFilter
         value={filterName}
         onChange={handleChangeNameFilter}
@@ -108,6 +114,7 @@ const Tasks = () => {
         closeNotification={() => setNotificationMessage(null)}
       ></Notification>
       <TaskForm
+        inputRef={inputRef}
         addTask={addTask}
         valueName={newName}
         onChangeName={handleNameChange}
