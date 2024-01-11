@@ -5,19 +5,25 @@ import { v4 as uuidv4 } from 'uuid';
 import Statistics from '../Statistics/Statistics';
 import TaskFilter from './TaskFilter/TaskFilter';
 import Notification from '../Notification/Notification';
+import tasksService from '../../services/tasks';
 
 const Tasks = () => {
-  const [listTask, setListTask] = useState(
-    JSON.parse(localStorage.getItem('listTasks')) || []
-  );
+  const [listTask, setListTask] = useState([]);
   const [newName, setNewName] = useState('');
   const [filterName, setFilterName] = useState('');
   const [notificationMessage, setNotificationMessage] = useState(null);
   const inputRef = useRef(null);
 
   useEffect(() => {
-    localStorage.setItem('listTasks', JSON.stringify(listTask));
-  }, [listTask]);
+    tasksService
+      .getAll()
+      .then((initialTasks) => {
+        setListTask(initialTasks);
+      })
+      .catch((error) => {
+        setNotificationMessage(`Error load tasks: ${error.message}`);
+      });
+  }, []);
 
   const filterList = filterName
     ? listTask.filter((t) =>
@@ -40,8 +46,10 @@ const Tasks = () => {
       name: newName,
       complete: false,
     };
-    setListTask(listTask.concat(newTask));
-    setNewName('');
+    tasksService.create(newTask).then((returnedTask) => {
+      setListTask(listTask.concat(returnedTask));
+      setNewName('');
+    });
   };
 
   const inputValidation = (text) => {
@@ -55,15 +63,29 @@ const Tasks = () => {
   const deleteTask = (id) => {
     const task = listTask.find((t) => t.id === id);
     if (window.confirm(`Delete task: ${task.name}`)) {
-      const tasks = listTask.filter((t) => t.id !== id);
-      setListTask(tasks);
+      tasksService
+        .remove(id)
+        .then(() => {
+          const tasks = listTask.filter((t) => t.id !== id);
+          setListTask(tasks);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 
   const completeTask = (id) => {
     const task = listTask.find((t) => t.id === id);
     const changeComplete = { ...task, complete: !task.complete };
-    setListTask(listTask.map((t) => (t.id === id ? changeComplete : t)));
+    tasksService
+      .update(task.id, changeComplete)
+      .then((returnTask) => {
+        setListTask(listTask.map((t) => (t.id === task.id ? returnTask : t)));
+      })
+      .catch((error) => {
+        console.log('Error change complete task', error);
+      });
   };
 
   const deleteAllCompleteTasks = () => {
@@ -72,8 +94,18 @@ const Tasks = () => {
     }
 
     if (window.confirm('Delete all complete tasks?')) {
-      const tasks = listTask.filter((t) => !t.complete);
-      setListTask(tasks);
+      const tasks = listTask.filter((t) => t.complete);
+      tasks.map((t) => {
+        tasksService
+          .remove(t.id)
+          .then(() => {
+            const updateTastk = listTask.filter((t) => !t.complete);
+            setListTask(updateTastk);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      });
     }
   };
 
@@ -83,10 +115,6 @@ const Tasks = () => {
 
   const totalTasks = () => {
     return listTask.length;
-  };
-
-  const setFocus = () => {
-    setInputIsFocus(true);
   };
 
   const totalCompleteTasks = () => {
